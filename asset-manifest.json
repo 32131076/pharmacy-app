@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/32131076/pharmacy-app/static/css/main.099655dd.css",
-    "main.js": "/32131076/pharmacy-app/static/js/main.312357dd.js",
+    "main.css": "/32131076/pharmacy-app/static/css/main.4c10c611.css",
+    "main.js": "/32131076/pharmacy-app/static/js/main.b2386703.js",
     "static/js/453.612a0043.chunk.js": "/32131076/pharmacy-app/static/js/453.612a0043.chunk.js",
     "index.html": "/32131076/pharmacy-app/index.html",
-    "main.099655dd.css.map": "/32131076/pharmacy-app/static/css/main.099655dd.css.map",
-    "main.312357dd.js.map": "/32131076/pharmacy-app/static/js/main.312357dd.js.map",
+    "main.4c10c611.css.map": "/32131076/pharmacy-app/static/css/main.4c10c611.css.map",
+    "main.b2386703.js.map": "/32131076/pharmacy-app/static/js/main.b2386703.js.map",
     "453.612a0043.chunk.js.map": "/32131076/pharmacy-app/static/js/453.612a0043.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.099655dd.css",
-    "static/js/main.312357dd.js"
+    "static/css/main.4c10c611.css",
+    "static/js/main.b2386703.js"
   ]
 }
