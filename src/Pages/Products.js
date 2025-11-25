@@ -1,64 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import '../style/Pages.css';
 import products from '../data/products';
 
-function Products() {
-  // Use all products from the shared data file
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('cart') || '[]');
-    } catch {
-      return [];
+// Receives the add function as a prop
+function Products({ onAddToCart }) {
+  // All cart state and UI logic were removed from here
+
+  // The add function calls the prop passed from App.js
+  const handleAddToCart = (product) => {
+    // Calling this prop triggers state update in App.js,
+    // which in turn re-renders the Header with the new cart count.
+    if (onAddToCart) {
+      onAddToCart({ id: product.id, name: product.name, price: product.price });
     }
-  });
-
-  const [showCart, setShowCart] = useState(false);
-  const cartRef = useRef(null);
-
-  // read-only view when cart button is placed on Home (or pages that should only view cart)
-  const readOnlyView = typeof window !== 'undefined' && (
-    window.location.pathname === '/' ||
-    window.location.pathname === '' ||
-    window.location.pathname.toLowerCase().includes('home')
-  );
-
-  useEffect(() => {
-    try { localStorage.setItem('cart', JSON.stringify(cart)); } catch {}
-  }, [cart]);
-
-  // close cart dropdown when clicking outside
-  useEffect(() => {
-    function handleOutside(e) {
-      if (showCart && cartRef.current && !cartRef.current.contains(e.target)) {
-        setShowCart(false);
-      }
-    }
-    document.addEventListener('mousedown', handleOutside);
-    return () => document.removeEventListener('mousedown', handleOutside);
-  }, [showCart]);
-
-  const addToCart = (product) => {
-    setCart(prev => {
-      const next = [...prev, { id: product.id, name: product.name, price: product.price }];
-      return next;
-    });
-    setShowCart(true);
-  };
-
-  const removeFromCart = (index) => {
-    setCart(prev => prev.filter((_, i) => i !== index));
   };
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Use all products from the imported products array
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // Track which prescription details are open (only one at a time)
   const [openId, setOpenId] = useState(null);
   const toggleDetails = (id) => {
     setOpenId(prev => (prev === id ? null : id));
@@ -68,46 +32,6 @@ function Products() {
     <div className="products-container">
       <h1>MZ Medicines</h1>
       <p>Browse our wide selection of quality medicines and health products</p>
-
-      {/* cart button + dropdown */}
-      <div className="cart-wrap" ref={cartRef}>
-        <button
-          type="button"
-          className="cart-button"
-          onClick={() => setShowCart(s => !s)}
-          aria-expanded={showCart}
-        >
-          Cart ({cart.length})
-        </button>
-
-        {showCart && (
-          <div className="cart-dropdown" role="dialog" aria-label="Cart items">
-            {cart.length === 0 ? (
-              <div className="cart-empty">Your cart is empty.</div>
-            ) : (
-              <ul className="cart-list">
-                {cart.map((item, idx) => (
-                  <li key={idx} className="cart-item">
-                    <span className="cart-item-name">{item.name}</span>
-                    {readOnlyView ? (
-                      <span className="cart-item-readonly" aria-hidden="true">View only</span>
-                    ) : (
-                      <button
-                        type="button"
-                        className="cart-remove-btn"
-                        onClick={() => removeFromCart(idx)}
-                        aria-label={`Remove ${item.name}`}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-      </div>
 
       <div className="search-bar">
         <input
@@ -141,11 +65,11 @@ function Products() {
               <button
                 className="add-to-cart"
                 disabled={product.inStock === false}
-                onClick={() => addToCart(product)}
+                onClick={() => handleAddToCart(product)}
               >
                 {product.inStock === false ? 'Unavailable' : 'Add to Cart'}
               </button>
-              {/* Show prescription toggle for all products */}
+
               <div style={{ marginTop: 10 }}>
                 <button
                   type="button"
@@ -156,7 +80,6 @@ function Products() {
                   {isOpen ? 'Hide Prescription' : 'View Prescription'}
                 </button>
               </div>
-              {/* Show prescription details if open */}
               {isOpen && (
                 <div className="prescription-details" aria-live="polite">
                   {product.dosage && <p><strong>Dosage:</strong> {product.dosage}</p>}
@@ -169,7 +92,6 @@ function Products() {
                   {product.manufacturer && <p><strong>Manufacturer:</strong> {product.manufacturer}</p>}
                   {product.ndc && <p><strong>NDC:</strong> {product.ndc}</p>}
                   {product.notes && <p><strong>Notes:</strong> {product.notes}</p>}
-                  {/* Fallback for products without prescription info */}
                   {!product.dosage && !product.directions && !product.indications && !product.contraindications && !product.sideEffects && !product.manufacturer && !product.ndc && !product.notes && (
                     <p style={{ color: '#888' }}>No prescription details available for this product.</p>
                   )}
@@ -179,7 +101,7 @@ function Products() {
           );
         })}
       </div>
-      
+
       {filteredProducts.length === 0 && (
         <p className="no-results">No products found matching your search.</p>
       )}
